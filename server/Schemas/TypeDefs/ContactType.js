@@ -1,12 +1,13 @@
 const graphql = require("graphql");
 const { GraphQLObjectType, GraphQLString } = graphql;
 
-const UserType = new GraphQLObjectType({
-  name: "User",
+// define the type of the contact 
+const ContactType = new GraphQLObjectType({
+  name: "Contact",
   fields: () => ({
     name: { type: GraphQLString },
     phone: { type: GraphQLString }
   }),
 });
 
-module.exports = UserType;
+module.exports = ContactType;

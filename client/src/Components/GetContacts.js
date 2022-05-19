@@ -1,6 +1,7 @@
+import '../App.css';
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { LOAD_USERS } from "../GraphQL/Queries";
+import { LOAD_CONTACTS } from "../GraphQL/Queries";
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -48,16 +49,34 @@ const Search = styled('div')(({ theme }) => ({
     },
   }));
 
-function GetUsers() {
-  const { data } = useQuery(LOAD_USERS);
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
+  const styles = {
+    containerTable: {
+      width: '60%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    tableCellName: {
+      paddingLeft: '20%'
+    },
+    tableCellPhone: {
+      paddingLeft: '10%'
+    }
+  }
+
+// to render all the contacts  
+function GetContacts() {
+  const { data } = useQuery(LOAD_CONTACTS);          // store all contacts in data
+  const [contacts, setcontacts] = useState([]);      // initialising the contacts in a list
+  const [searchTerm, setSearchTerm] = useState('');  // initialising the searched string
+
+  // checking whether the data is received or not
   useEffect(() => {
     if (data) {
-      setUsers(data.getAllUsers);
+      setcontacts(data.getAllContacts);          // adding all contacts into contacts by setcontacts
     }
-  }, [data]);
+  }, [data]);  // wait for this data to be changed
   
   
 
@@ -68,29 +87,29 @@ function GetUsers() {
             <StyledInputBase
               placeholder="Search..."
               inputProps={{ 'aria-label': 'search' }}
-              onChange={event => {setSearchTerm(event.target.value)}}
+              onChange={event => {setSearchTerm(event.target.value)}}      // adding the searched string into searchTerm by setSearchTerm
             />
       </Search>
-      <Container style={{ width: '60%', display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+      <Container style={styles.containerTable}>
         <TableContainer component={Paper}>
         <Table size="small" aria-label="a dense table">
             <TableHead>
             <TableRow>
-                <TableCell style={{paddingLeft: '20%'}}><h3>Name</h3></TableCell>
-                <TableCell style={{paddingLeft: '10%'}}><h3>Phone</h3></TableCell>
+                <TableCell style={styles.tableCellName}><h3>Name</h3></TableCell>
+                <TableCell style={styles.tableCellPhone}><h3>Phone</h3></TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
-            {users.filter((val) => {
+            {contacts.filter((val) => {           // include or exclude contact based on condition
                 if(searchTerm === "") {
-                    return val;
-                } else if(val.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    return val;
+                    return val;                   // return all (one by one) through loop
+                } else if(val.name.toLowerCase().includes(searchTerm.toLowerCase())) {  // matching contact name with the searched string
+                    return val;                   // return the current value      
                 }
-            }).map((val) => (
+            }).map((val) => (                     // map through every contact
                 <TableRow>
-                <TableCell style={{paddingLeft: '20%'}}>{val.name}</TableCell>
-                <TableCell style={{paddingLeft: '10%'}}>{val.phone}</TableCell>
+                <TableCell style={styles.tableCellName}>{val.name}</TableCell>
+                <TableCell style={styles.tableCellPhone}>{val.phone}</TableCell>
                 </TableRow>
             ))}
             </TableBody>
@@ -101,4 +120,4 @@ function GetUsers() {
   );
 }
 
-export default GetUsers;
+export default GetContacts;
